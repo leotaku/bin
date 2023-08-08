@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+NAME="run-$RANDOM"
+if [ "$1" = "--stop" ]; then
+    systemctl --user stop "$2".service
+    exit 0
+elif [ "$1" = "--view" ]; then
+    journalctl --user -fu "$2".service
+    exit 0
+elif [ "$1" = "--self" ]; then
+    NAME="$2"
+    shift 1
+elif [ "$1" = "--name" ]; then
+    NAME="$2"
+    shift 2
+fi
+
+systemd-run --user --same-dir --unit "$NAME" "$@"

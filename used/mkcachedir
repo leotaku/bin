@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+set -e
+
+if [ "$#" -ne "0" ] && [ "$#" -ne "1" ]; then
+    echo "error: Wrong number of arguments"
+    exit 1
+fi
+
+contents="Signature: 8a477f597d28d172789f06886806bc55"
+directory="${1:-$PWD}"
+
+echo "Creating file CACHEDIR.TAG in ${directory}"
+echo "$contents" > "${directory}/CACHEDIR.TAG"
