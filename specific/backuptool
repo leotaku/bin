@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+set -e
+
+if [ "$#" -eq "0" ]; then
+    echo "error: Wrong number of arguments"
+    exit 1
+fi
+
+target="$1"
+shift 1
+
+env_file="${HOME}/.local/share/secrets/restic-${target}.env"
+if ! [ -f "$env_file" ]; then
+    echo "error: no configuration for: ${target}"
+    exit 1
+fi
+
+source "$env_file"
+export B2_ACCOUNT_ID B2_ACCOUNT_KEY RESTIC_PASSWORD RESTIC_REPOSITORY
+
+restic "${@}"

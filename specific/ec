@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+set -e
+
+ec_gnome () {
+    result="$(gdbus call --session \
+--dest org.gnome.Shell \
+--object-path /de/lucaswerkmeister/ActivateWindowByTitle \
+--method de.lucaswerkmeister.ActivateWindowByTitle.activateByWmClass \
+'emacs')"
+
+    if [ "$result" != "(true,)" ]; then
+        emacsclient --no-wait --create-frame "${@}"
+    else
+        emacsclient --no-wait "${@}"
+    fi
+}
+
+ec_xorg () {
+    id="$(xdo id -d -N Emacs)"
+    if ! [ -z "$id" ]; then
+        xdo activate -r "$id"
+        if ! [ -z "$@" ]; then
+            emacsclient --no-wait "${@}"
+        fi
+    else
+        emacsclient --no-wait --create-frame "${@}"
+    fi
+}
+
+if [ "$(loginctl show-session 2 -p Type)" = "Type=wayland" ]; then
+    ec_gnome "${@}"
+else
+    ec_xorg "${@}"
+fi
