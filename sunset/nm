@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+if [ -z "$@" ]; then
+    notmuch search tag:unread
+    notmuch tag -unread tag:unread
+else
+    notmuch $@
+fi

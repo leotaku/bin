@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+
+ssh "$1" 'cat >> $HOME/.ssh/authorized_keys' < $HOME/.ssh/id_rsa.pub
+echo "If you are not prompted for your password now, the operation succeded."
+ssh  "$1" 'echo done'

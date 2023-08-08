@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+#: Variables
+
+COMMAND="$1"
+PLAYER="$2"
+BINARY="${3:-$PLAYER}"
+SOURCE="simplerecord"
+LISTEN="${SOURCE}.monitor"
+
+#: Cleanup
+
+finish() {
+    echo "Cleaning up..."
+    pactl unload-module "$MODULE"
+    pactl move-sink-input "$INPUT" "@DEFAULT_SINK@"
+}
+
+#: Pulseaudio setup
+
+setup() {
+    case "$PLAYER" in
+        '')
+            echo "No player specified"
+            exit ;;
+        *[!0-9]*)
+            echo "Waiting for input matching binary ($BINARY)..."
+
+            while [[ -z "$INPUT" ]]; do
+                INPUT=$(pactl list sink-inputs | \
+                            awk -v BINARY="$BINARY" \
+                        '/Sink Input/{ SINK=substr($3,2);
+                               {while ($1 != "application.process.binary")
+                                     {getline}; if($3~BINARY) {
+                                                print SINK
+                                     }
+                               }
+                         }';)
+
+                sleep 0.1
+            done ;;
+        *)
+            INPUT="$PLAYER" ;;
+    esac
+
+    trap finish EXIT
+
+    MODULE="$(pactl load-module module-null-sink sink_name="$SOURCE")"
+    pactl move-sink-input "$INPUT" "$SOURCE"
+
+}
+
+#: Record song
+
+record_song() {
+    local metadata
+    local status
+    local pid
+
+    echo "Waiting for song..."
+
+    while [[ "$status" != "Playing" ]]; do
+        status="$(playerctl -p "$PLAYER" status)"
+        sleep 0.01
+    done
+
+    metadata="$(playerctl -p "$PLAYER" metadata title)"
+
+    echo "Recording ${metadata}"
+    ffmpeg -loglevel warning -f pulse -i "$LISTEN" -acodec libmp3lame -ab 320k -y "${metadata}.mp3" &
+    pid="$!"
+
+    while [[ "$(playerctl -p "$PLAYER" metadata title)" == "${metadata}" ]]; do
+        sleep 0.01
+    done
+
+    kill -INT "$pid"
+
+    echo "Done recording ${metadata}"
+
+}
+
+#: Switch commands
+
+case "$COMMAND" in
+    record)
+        setup && record_song ;;
+    playlist)
+        setup && { while true; do record_song; done };;
+    sources)
+        pactl list sink-inputs |\
+            awk '/Sink Input/{ SINK=substr($3,2);
+                       {while ($1 != "application.process.binary")
+                              {getline}; { print SINK " - " $3}
+                       }
+                 }' ;;
+    *) echo "Please specify a valid command (record|playlist|sources)" ;;
+esac

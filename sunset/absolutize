@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+SOURCE=$(readlink -e "$1")
+if [ -L "$1" ] && [ -f "$SOURCE" ]; then
+    rsync --ignore-times -ptU "$SOURCE" "$1"
+fi

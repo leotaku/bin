@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -e
+NAME="$1"
+
+if [[ "$(basename $PWD)" != "$NAME" ]]; then
+   mkdir "$NAME"
+   cd "$NAME"
+fi
+
+git init
+
+tee .envrc <<EOF
+use nix
+EOF
+
+tee shell.nix <<EOF
+{ pkgs ? import <nixpkgs> { } }:
+with pkgs;
+stdenvNoCC.mkDerivation {
+  name = "dev-shell";
+  buildInputs = [ ];
+}
+EOF
+
+direnv allow

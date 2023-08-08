@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+perf record --call-graph lbr -F 10000 -- $@
+perf script | stackcollapse-perf.pl > perf.perf-folded
+flamegraph.pl perf.perf-folded > flamegraph.svg

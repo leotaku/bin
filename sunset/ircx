@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+DIR="${WEECHAT_HOME:-$HOME/.weechat}"
+REGEX="${1:-.*\.txt.zip}"
+cd "$DIR"
+
+# Search the list of entries
+FILE="$(find -regex "$REGEX" | fzf)"
+if [ -n "$FILE" ]; then
+    bsdtar -xOf "$FILE" | grep '^!' | fzf --tac
+fi
