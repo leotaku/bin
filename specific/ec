@@ -6,7 +6,7 @@ ec_gnome () {
 --dest org.gnome.Shell \
 --object-path /de/lucaswerkmeister/ActivateWindowByTitle \
 --method de.lucaswerkmeister.ActivateWindowByTitle.activateByWmClass \
-'emacs')"
+'Emacs')"
 
     if [ "$result" != "(true,)" ]; then
         emacsclient --no-wait --create-frame "${@}"
