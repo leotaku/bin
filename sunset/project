@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -e
 NAME="$1"
 
-if [[ "$(basename $PWD)" != "$NAME" ]]; then
+if [ "$(basename "$PWD")" != "$NAME" ]; then
    mkdir "$NAME"
    cd "$NAME"
 fi
