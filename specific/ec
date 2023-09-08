@@ -3,13 +3,11 @@ set -e
 
 alias activate="gdbus call --session \
 --dest org.gnome.Shell \
---object-path /de/lucaswerkmeister/ActivateWindowByTitle \
---method de.lucaswerkmeister.ActivateWindowByTitle.activateByWmClass"
+--object-path /gs/le0/zen/WindowFocus \
+--method gs.le0.zen.WindowFocus.focusByWmClassOnWorkspace"
 
 ec_gnome () {
     if [ "$(activate 'Emacs')" == "(true,)" ]; then
-        emacsclient --no-wait "${@}"
-    elif [ "$(activate 'emacs')" == "(true,)" ]; then
         emacsclient --no-wait "${@}"
     else
         emacsclient --no-wait --create-frame "${@}"
