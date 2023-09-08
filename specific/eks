@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-emacsclient -e '(save-buffers-kill-emacs)' && systemctl --user restart emacs.service
+emacsclient -e '(save-buffers-kill-emacs)'
