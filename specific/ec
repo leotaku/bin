@@ -28,8 +28,10 @@ ec_xorg () {
     fi
 }
 
-if [ "$(loginctl show-session 2 -p Type)" = "Type=wayland" ]; then
+if systemctl --user is-active org.gnome.Shell.target --quiet; then
     ec_gnome "${@}"
-else
+elif command -v xdo >/dev/null; then
     ec_xorg "${@}"
+else
+    emacsclient --no-wait --create-frame "${@}"
 fi
