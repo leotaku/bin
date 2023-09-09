@@ -7,6 +7,11 @@ alias activate="gdbus call --session \
 --method gs.le0.zen.WindowFocus.focusByWmClassOnWorkspace"
 
 ec_gnome () {
+    if systemctl --user is-active org.gnome.Shell@wayland.service --quiet; then
+        export WAYLAND_DISPLAY=wayland-0
+        export GDK_BACKEND=wayland
+    fi
+
     if [ "$(activate 'Emacs')" == "(true,)" ]; then
         emacsclient --no-wait "${@}"
     else
