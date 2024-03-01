@@ -15,7 +15,7 @@ if ! [ -f "$env_file" ]; then
     exit 1
 fi
 
-source "$env_file"
+. "$env_file"
 export B2_ACCOUNT_ID B2_ACCOUNT_KEY RESTIC_PASSWORD RESTIC_REPOSITORY
 
 restic "${@}"

@@ -12,7 +12,7 @@ ec_gnome () {
         export GDK_BACKEND=wayland
     fi
 
-    if [ "$(activate 'Emacs')" == "(true,)" ]; then
+    if [ "$(activate 'Emacs')" = "(true,)" ]; then
         emacsclient --no-wait "${@}"
     else
         emacsclient --no-wait --create-frame "${@}"

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-NAME="run-$RANDOM"
+NAME="run-$(date +%H%M%S)"
 if [ "$1" = "--stop" ]; then
     systemctl --user stop "$2".service
     exit 0
