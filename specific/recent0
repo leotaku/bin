@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -e
+
+IFS='' read elisp <<-EOF
+  (make-temp-file "recent0" nil nil \
+   (string-join (mapcar #'expand-file-name recentf-list) \
+                (char-to-string 0)))
+EOF
+
+F="$(emacsclient --eval "$elisp")"
+F="${F#\"}"
+F="${F%\"}"
+
+cat "$F" && rm "$F"
